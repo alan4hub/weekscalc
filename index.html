@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WSDLH3PJ');</script>
-    <!-- End Google Tag Manager -->
+    <title>주수 계산기 - Weeks & Days Calculator</title>
     <meta name="description" content="오늘을 기준으로 1주, 2주, 10일 뒤 날짜를 계산하는 간편한 주수 계산기. Easy-to-use weeks and days calculator based on today’s date.">
     <meta name="keywords" content="주수 계산기, 날짜 계산기, weeks calculator, date calculator, 업무 도구">
-    <title>주수 계산기 - Weeks & Days Calculator</title>
+
+    <!-- Google Tag Manager -->
+    <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-WSDLH3PJ');
+    </script>
+    <!-- End Google Tag Manager -->
+
     <style>
         body {
             background-color: #333;
@@ -40,10 +44,29 @@
             flex-grow: 1;
             font-size: 18px;
         }
+        .dropdown {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .dropdown select {
+            background-color: orange;
+            color: white;
+            border: none;
+            padding: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <h1>주수 계산기</h1>
+    <div class="dropdown">
+        <select id="languageSelect" onchange="changeLanguage()">
+            <option value="ko">한국어</option>
+            <option value="en">English</option>
+        </select>
+    </div>
+    <h1 id="title">주수 계산기</h1>
     <div id="today">오늘 날짜: </div>
     <div class="section">
         <button onclick="changeWeeks1(-1)">-</button>
@@ -62,10 +85,11 @@
     </div>
 
     <script>
-        const today = new Date('2025-03-29'); // 오늘 날짜 고정 (현재 날짜로 바꾸려면 new Date() 사용)
+        const today = new Date(); // 현재 날짜로 변경
         let weeks1 = 1;
         let weeks2 = 2;
         let days10 = 10;
+        let lang = 'ko'; // 기본 언어: 한국어
 
         // 날짜 포맷팅 함수 (yy-MM-dd)
         function formatDate(date) {
@@ -75,25 +99,51 @@
             return `${year}-${month}-${day}`;
         }
 
-        // 날짜 업데이트 함수
+        // 텍스트 업데이트 함수
         function updateDates() {
-            document.getElementById('today').textContent = `오늘 날짜: ${formatDate(today)}`;
+            const texts = {
+                ko: {
+                    title: "주수 계산기",
+                    today: `오늘 날짜: ${formatDate(today)}`,
+                    weeks1: `${weeks1}주 뒤: `,
+                    weeks2: `${weeks2}주 뒤: `,
+                    days10: `${days10}일 뒤: `
+                },
+                en: {
+                    title: "Weeks & Days Calculator",
+                    today: `Today's Date: ${formatDate(today)}`,
+                    weeks1: `${weeks1} Week(s) Later: `,
+                    weeks2: `${weeks2} Week(s) Later: `,
+                    days10: `${days10} Day(s) Later: `
+                }
+            };
+
+            document.getElementById('title').textContent = texts[lang].title;
+            document.getElementById('today').textContent = texts[lang].today;
+            
             const date1 = new Date(today);
             date1.setDate(today.getDate() + weeks1 * 7);
-            document.getElementById('weeks1-text').textContent = `${weeks1}주 뒤: ${formatDate(date1)}`;
+            document.getElementById('weeks1-text').textContent = texts[lang].weeks1 + formatDate(date1);
             
             const date2 = new Date(today);
             date2.setDate(today.getDate() + weeks2 * 7);
-            document.getElementById('weeks2-text').textContent = `${weeks2}주 뒤: ${formatDate(date2)}`;
+            document.getElementById('weeks2-text').textContent = texts[lang].weeks2 + formatDate(date2);
             
             const date10 = new Date(today);
             date10.setDate(today.getDate() + days10);
-            document.getElementById('days10-text').textContent = `${days10}일 뒤: ${formatDate(date10)}`;
+            document.getElementById('days10-text').textContent = texts[lang].days10 + formatDate(date10);
+        }
+
+        // 언어 변경 함수
+        function changeLanguage() {
+            lang = document.getElementById('languageSelect').value;
+            document.documentElement.lang = lang;
+            updateDates();
         }
 
         // 버튼 이벤트 함수
         function changeWeeks1(change) {
-            weeks1 = Math.max(0, weeks1 + change); // 0 이하로 안 내려가게
+            weeks1 = Math.max(0, weeks1 + change);
             updateDates();
         }
         function changeWeeks2(change) {
@@ -105,12 +155,23 @@
             updateDates();
         }
 
+        // 국가 감지 및 초기 언어 설정
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(data => {
+                lang = data.country_code === 'KR' ? 'ko' : 'en'; // 한국이면 한글, 아니면 영어
+                document.getElementById('languageSelect').value = lang;
+                document.documentElement.lang = lang;
+                updateDates();
+            })
+            .catch(() => {
+                lang = 'en'; // 오류 시 기본 영어
+                updateDates();
+            });
+
         // 페이지 로드 시 초기 날짜 표시
         updateDates();
     </script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92b883b6ddf5bca8',t:'MTc0Mzg1MDU0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
-    <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WSDLH3PJ"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
 </html>
