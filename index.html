@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
     <title>주수 계산기 - Weeks & Days Calculator</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Calculate dates easily with our Weeks & Days Calculator. Find dates 1 week, 2 weeks, or 10 days from today. 오늘을 기준으로 1주, 2주, 10일 뒤 날짜를 계산하는 간편한 주수 계산기.">
     <meta name="keywords" content="주수 계산기, 날짜 계산기, weeks calculator, date calculator, free date calculator, scheduling tool, 업무 도구">
@@ -208,7 +209,12 @@
         let weeks1 = 1;
         let weeks2 = 2;
         let days10 = 10;
+        // 기본값을 한국어로 설정
         let lang = 'ko';
+        
+        // 초기 설정 즉시 적용 - 우선 한국어로 표시
+        document.getElementById('languageSelect').value = lang;
+        document.documentElement.lang = lang;
 
         function formatDate(date, lang) {
             const year = date.getFullYear().toString().slice(-2);
@@ -262,6 +268,10 @@
         function changeLanguage() {
             lang = document.getElementById('languageSelect').value;
             document.documentElement.lang = lang;
+            
+            // 언어 변경 시 로컬 스토리지에 저장
+            localStorage.setItem('preferredLanguage', lang);
+            
             updateDates();
         }
 
@@ -278,31 +288,62 @@
             updateDates();
         }
 
-        // URL에서 언어 파라미터 확인
-        const urlParams = new URLSearchParams(window.location.search);
-        const langParam = urlParams.get('lang');
-        if (langParam === 'ko' || langParam === 'en') {
-            lang = langParam;
+        // 언어 설정 결정하는 함수
+        function setLanguage() {
+            // 1. URL 파라미터 확인
+            const urlParams = new URLSearchParams(window.location.search);
+            const langParam = urlParams.get('lang');
+            
+            // 2. 로컬 스토리지 확인
+            const storedLang = localStorage.getItem('preferredLanguage');
+            
+            if (langParam === 'ko' || langParam === 'en') {
+                // URL 파라미터가 있으면 최우선
+                lang = langParam;
+            } else if (storedLang === 'ko' || storedLang === 'en') {
+                // 저장된 언어 설정이 있으면 사용
+                lang = storedLang;
+            } else {
+                // 브라우저 설정 확인
+                const browserLang = navigator.language || navigator.userLanguage;
+                if (browserLang && browserLang.startsWith('ko')) {
+                    lang = 'ko';
+                } else {
+                    // IP 위치 기반 감지는 백업 수단으로만 사용
+                    detectLanguageByIP();
+                    return; // IP 감지 함수 내에서 업데이트 처리
+                }
+            }
+            
+            // 언어 설정 및 업데이트
             document.getElementById('languageSelect').value = lang;
             document.documentElement.lang = lang;
             updateDates();
-        } else {
-            // 언어 감지
+        }
+        
+        // IP 기반 국가 감지 (백업 수단)
+        function detectLanguageByIP() {
             fetch('https://ipapi.co/json/')
                 .then(response => response.json())
                 .then(data => {
-                    lang = data.country_code === 'KR' ? 'ko' : 'en';
+                    if (data && data.country_code === 'KR') {
+                        lang = 'ko';
+                    } else {
+                        lang = 'en';
+                    }
                     document.getElementById('languageSelect').value = lang;
                     document.documentElement.lang = lang;
                     updateDates();
                 })
                 .catch(() => {
-                    lang = 'en';
+                    // API 호출 실패 시 기본값 유지 (ko)
                     updateDates();
                 });
         }
 
-        updateDates();
+        // 초기 실행
+        updateDates(); // 기본 한국어로 먼저 표시
+        setLanguage(); // 그 후 언어 설정 적용
     </script>
 </body>
 </html>
