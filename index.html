@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
     <title>주수 계산기 - Weeks & Days Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Calculate dates easily with our Weeks & Days Calculator. Find dates 1 week, 2 weeks, or 10 days from today. 오늘을 기준으로 1주, 2주, 10일 뒤 날짜를 계산하는 간편한 주수 계산기.">
     <meta name="keywords" content="주수 계산기, 날짜 계산기, weeks calculator, date calculator, free date calculator, scheduling tool, 업무 도구">
 
@@ -28,33 +29,55 @@
             padding: 20px;
             text-align: center;
             margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
         }
         .section {
             display: flex;
             align-items: center;
-            margin: 10px 0;
-            justify-content: center; /* 중앙 정렬 */
+            margin: 15px 0;
+            justify-content: center;
         }
         .date-group {
             display: flex;
             align-items: center;
-            gap: 10px; /* 버튼과 텍스트 간격 */
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
         }
         button {
             background-color: orange;
             border: none;
-            padding: 10px 20px;
+            padding: 10px;
             font-size: 18px;
             cursor: pointer;
             width: 50px;
+            height: 50px;
             border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         button:hover {
             background-color: #e69500;
         }
+        .label-text {
+            font-size: 18px;
+            width: 100px;
+            text-align: right;
+        }
         .date-text {
             font-size: 18px;
-            min-width: 200px; /* 날짜 텍스트의 최소 너비 지정 */
+            width: 120px;
+            text-align: left;
         }
         .dropdown {
             position: absolute;
@@ -71,45 +94,67 @@
             border-radius: 5px;
         }
         .description {
-            margin-top: 20px;
-            font-size: 14px;
+            margin-top: 30px;
+            font-size: 16px;
             line-height: 1.5;
+            max-width: 600px;
+            padding: 0 20px;
         }
-        /* 모바일 최적화 */
-        @media (max-width: 600px) {
+        h1 {
+            margin-bottom: 20px;
+        }
+        #today {
+            margin-bottom: 30px;
+            font-size: 20px;
+        }
+        
+        /* 모바일 최적화 - 획기적으로 크게 */
+        @media (max-width: 768px) {
             body {
-                padding: 15px;
+                padding: 15px 5px;
             }
             h1 {
-                font-size: 6vw; /* 뷰포트 너비에 비례 */
-                min-font-size: 24px; /* 최소 크기 보장 */
+                font-size: 32px;
+                margin-bottom: 25px;
+            }
+            #today {
+                font-size: 24px;
+                margin-bottom: 40px;
+            }
+            .dropdown {
+                top: 20px;
+                left: 20px;
             }
             .dropdown select {
-                font-size: 4vw;
-                min-font-size: 16px;
-                padding: 8px;
-            }
-            .date-text {
-                font-size: 4vw;
-                min-font-size: 16px;
-                min-width: 150px; /* 모바일에서 최소 너비 조정 */
-            }
-            button {
-                width: 12vw;
-                min-width: 40px;
-                padding: 3vw 5vw;
-                font-size: 4vw;
-                min-font-size: 16px;
-            }
-            .description {
-                font-size: 3vw;
-                min-font-size: 12px;
-            }
-            .section {
-                margin: 2vw 0;
+                font-size: 20px;
+                padding: 10px;
             }
             .date-group {
-                gap: 2vw;
+                gap: 12px;
+                margin: 15px 0;
+            }
+            .label-text {
+                font-size: 24px;
+                width: auto;
+                padding: 0 5px;
+            }
+            .date-text {
+                font-size: 24px;
+                width: auto;
+                padding: 0 5px;
+            }
+            button {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+                padding: 15px;
+            }
+            .description {
+                font-size: 20px;
+                margin-top: 40px;
+            }
+            .section {
+                margin: 20px 0;
             }
         }
     </style>
@@ -121,35 +166,41 @@
             <option value="en">English</option>
         </select>
     </div>
-    <h1 id="title">주수 계산기</h1>
-    <div id="today">오늘 날짜: </div>
-    <div class="section">
-        <div class="date-group">
-            <span id="weeks1-label"></span>
-            <button onclick="changeWeeks1(-1)">−</button>
-            <span class="date-text" id="weeks1-text"></span>
-            <button onclick="changeWeeks1(1)">+</button>
+    
+    <div class="container">
+        <h1 id="title">주수 계산기</h1>
+        <div id="today">오늘 날짜: </div>
+        
+        <div class="section">
+            <div class="date-group">
+                <button onclick="changeWeeks1(-1)">−</button>
+                <span class="label-text" id="weeks1-label">1주 뒤:</span>
+                <span class="date-text" id="weeks1-text"></span>
+                <button onclick="changeWeeks1(1)">+</button>
+            </div>
         </div>
-    </div>
-    <div class="section">
-        <div class="date-group">
-            <span id="weeks2-label"></span>
-            <button onclick="changeWeeks2(-1)">−</button>
-            <span class="date-text" id="weeks2-text"></span>
-            <button onclick="changeWeeks2(1)">+</button>
+        
+        <div class="section">
+            <div class="date-group">
+                <button onclick="changeWeeks2(-1)">−</button>
+                <span class="label-text" id="weeks2-label">2주 뒤:</span>
+                <span class="date-text" id="weeks2-text"></span>
+                <button onclick="changeWeeks2(1)">+</button>
+            </div>
         </div>
-    </div>
-    <div class="section">
-        <div class="date-group">
-            <span id="days10-label"></span>
-            <button onclick="changeDays10(-1)">−</button>
-            <span class="date-text" id="days10-text"></span>
-            <button onclick="changeDays10(1)">+</button>
+        
+        <div class="section">
+            <div class="date-group">
+                <button onclick="changeDays10(-1)">−</button>
+                <span class="label-text" id="days10-label">10일 뒤:</span>
+                <span class="date-text" id="days10-text"></span>
+                <button onclick="changeDays10(1)">+</button>
+            </div>
         </div>
-    </div>
 
-    <div class="description" id="description">
-        이 도구를 사용하면 오늘 날짜를 기준으로 1주, 2주, 10일 뒤의 날짜를 쉽게 계산할 수 있습니다. 업무 스케줄링이나 개인 일정 관리에 유용합니다.
+        <div class="description" id="description">
+            이 도구를 사용하면 오늘 날짜를 기준으로 1주, 2주, 10일 뒤의 날짜를 쉽게 계산할 수 있습니다. 업무 스케줄링이나 개인 일정 관리에 유용합니다.
+        </div>
     </div>
 
     <script>
@@ -227,18 +278,29 @@
             updateDates();
         }
 
-        fetch('https://ipapi.co/json/')
-            .then(response => response.json())
-            .then(data => {
-                lang = data.country_code === 'KR' ? 'ko' : 'en';
-                document.getElementById('languageSelect').value = lang;
-                document.documentElement.lang = lang;
-                updateDates();
-            })
-            .catch(() => {
-                lang = 'en';
-                updateDates();
-            });
+        // URL에서 언어 파라미터 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get('lang');
+        if (langParam === 'ko' || langParam === 'en') {
+            lang = langParam;
+            document.getElementById('languageSelect').value = lang;
+            document.documentElement.lang = lang;
+            updateDates();
+        } else {
+            // 언어 감지
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    lang = data.country_code === 'KR' ? 'ko' : 'en';
+                    document.getElementById('languageSelect').value = lang;
+                    document.documentElement.lang = lang;
+                    updateDates();
+                })
+                .catch(() => {
+                    lang = 'en';
+                    updateDates();
+                });
+        }
 
         updateDates();
     </script>
