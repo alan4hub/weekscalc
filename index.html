@@ -54,6 +54,7 @@
         }
         .date-text {
             font-size: 18px;
+            min-width: 200px; /* 날짜 텍스트의 최소 너비 지정 */
         }
         .dropdown {
             position: absolute;
@@ -91,10 +92,11 @@
             .date-text {
                 font-size: 4vw;
                 min-font-size: 16px;
+                min-width: 150px; /* 모바일에서 최소 너비 조정 */
             }
             button {
                 width: 12vw;
-                min-width: 50px;
+                min-width: 40px;
                 padding: 3vw 5vw;
                 font-size: 4vw;
                 min-font-size: 16px;
@@ -123,22 +125,25 @@
     <div id="today">오늘 날짜: </div>
     <div class="section">
         <div class="date-group">
-            <span class="date-text" id="weeks1-text">1주 뒤: </span>
-            <button onclick="changeWeeks1(-1)">-</button>
+            <span id="weeks1-label"></span>
+            <button onclick="changeWeeks1(-1)">−</button>
+            <span class="date-text" id="weeks1-text"></span>
             <button onclick="changeWeeks1(1)">+</button>
         </div>
     </div>
     <div class="section">
         <div class="date-group">
-            <span class="date-text" id="weeks2-text">2주 뒤: </span>
-            <button onclick="changeWeeks2(-1)">-</button>
+            <span id="weeks2-label"></span>
+            <button onclick="changeWeeks2(-1)">−</button>
+            <span class="date-text" id="weeks2-text"></span>
             <button onclick="changeWeeks2(1)">+</button>
         </div>
     </div>
     <div class="section">
         <div class="date-group">
-            <span class="date-text" id="days10-text">10일 뒤: </span>
-            <button onclick="changeDays10(-1)">-</button>
+            <span id="days10-label"></span>
+            <button onclick="changeDays10(-1)">−</button>
+            <span class="date-text" id="days10-text"></span>
             <button onclick="changeDays10(1)">+</button>
         </div>
     </div>
@@ -166,17 +171,17 @@
                 ko: {
                     title: "주수 계산기",
                     today: `오늘 날짜: ${formatDate(today, 'ko')}`,
-                    weeks1: `${weeks1}주 뒤: `,
-                    weeks2: `${weeks2}주 뒤: `,
-                    days10: `${days10}일 뒤: `,
+                    weeks1Label: `${weeks1}주 뒤:`,
+                    weeks2Label: `${weeks2}주 뒤:`,
+                    days10Label: `${days10}일 뒤:`,
                     description: "이 도구를 사용하면 오늘 날짜를 기준으로 1주, 2주, 10일 뒤의 날짜를 쉽게 계산할 수 있습니다. 업무 스케줄링이나 개인 일정 관리에 유용합니다."
                 },
                 en: {
                     title: "Weeks & Days Calculator",
                     today: `Today's Date: ${formatDate(today, 'en')}`,
-                    weeks1: `${weeks1} Week(s) Later: `,
-                    weeks2: `${weeks2} Week(s) Later: `,
-                    days10: `${days10} Day(s) Later: `,
+                    weeks1Label: `${weeks1} Week(s) Later:`,
+                    weeks2Label: `${weeks2} Week(s) Later:`,
+                    days10Label: `${days10} Day(s) Later:`,
                     description: "Use this tool to easily calculate dates 1 week, 2 weeks, or 10 days from today. Perfect for work scheduling or personal planning."
                 }
             };
@@ -184,17 +189,21 @@
             document.getElementById('title').textContent = texts[lang].title;
             document.getElementById('today').textContent = texts[lang].today;
             
+            document.getElementById('weeks1-label').textContent = texts[lang].weeks1Label;
+            document.getElementById('weeks2-label').textContent = texts[lang].weeks2Label;
+            document.getElementById('days10-label').textContent = texts[lang].days10Label;
+            
             const date1 = new Date(today);
             date1.setDate(today.getDate() + weeks1 * 7);
-            document.getElementById('weeks1-text').textContent = texts[lang].weeks1 + formatDate(date1, lang);
+            document.getElementById('weeks1-text').textContent = formatDate(date1, lang);
             
             const date2 = new Date(today);
             date2.setDate(today.getDate() + weeks2 * 7);
-            document.getElementById('weeks2-text').textContent = texts[lang].weeks2 + formatDate(date2, lang);
+            document.getElementById('weeks2-text').textContent = formatDate(date2, lang);
             
             const date10 = new Date(today);
             date10.setDate(today.getDate() + days10);
-            document.getElementById('days10-text').textContent = texts[lang].days10 + formatDate(date10, lang);
+            document.getElementById('days10-text').textContent = formatDate(date10, lang);
 
             document.getElementById('description').textContent = texts[lang].description;
         }
@@ -233,4 +242,5 @@
 
         updateDates();
     </script>
-    <script>(function(){function c(){var b=a.contentDocument||
+</body>
+</html>
